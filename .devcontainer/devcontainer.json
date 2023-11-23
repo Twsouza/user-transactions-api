@@ -1,0 +1,8 @@
+{
+  "name": "user-transactions",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "service": "transactions",
+  "workspaceFolder": "/src/user-transactions"
+}
