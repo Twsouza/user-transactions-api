@@ -54,7 +54,7 @@ func NewTransaction(origin, userId string, amount int64, opType OperationType) (
 		UserID:    userId,
 		Amount:    amount,
 		Type:      opType,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
 	}
 
 	if err := t.validate(); err != nil {
