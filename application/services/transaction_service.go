@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -29,18 +28,18 @@ func NewTransactionService(tr repositories.TransactionRepository) (*TransactionS
 	}, nil
 }
 
-func (ts *TransactionService) CreateTransaction(c context.Context, req *dto.CreateTransactionReq) (*dto.TransactionRes, error) {
+func (ts *TransactionService) CreateTransaction(c context.Context, req *dto.CreateTransactionReq) (*dto.TransactionRes, []error) {
 	ctx, cancel := context.WithTimeout(c, time.Duration(ts.Timeout)*time.Second)
 	defer cancel()
 
 	transaction, errs := core.NewTransaction(req.Origin, req.UserID, req.Amount, core.OperationType(req.Type))
 	if errs != nil {
-		return nil, fmt.Errorf("error creating transaction: %v", errs)
+		return nil, errs
 	}
 
 	_, err := ts.TransactionRepository.Insert(ctx, transaction)
 	if err != nil {
-		return nil, err
+		return nil, []error{err}
 	}
 
 	return &dto.TransactionRes{

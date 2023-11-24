@@ -1,19 +1,24 @@
 package dto
 
-import "time"
+import (
+	"encoding/xml"
+	"time"
+)
 
 type CreateTransactionReq struct {
-	Origin string `json:"origin"`
-	UserID string `json:"user_id"`
-	Amount int64  `json:"amount"`
-	Type   string `json:"type"`
+	XMLName xml.Name `json:"-" xml:"transaction"`
+	Origin  string   `json:"origin" xml:"origin"`
+	UserID  string   `json:"user_id" xml:"user_id"`
+	Amount  int64    `json:"amount" xml:"amount"`
+	Type    string   `json:"type" xml:"type"`
 }
 
 type TransactionRes struct {
-	ID        string    `json:"id"`
-	Origin    string    `json:"origin"`
-	UserID    string    `json:"user_id"`
-	Amount    int64     `json:"amount"`
-	Type      string    `json:"type"`
-	CreatedAt time.Time `json:"created_at"`
+	XMLName   xml.Name  `json:"-" xml:"transaction"`
+	ID        string    `json:"id" xml:"id"`
+	Origin    string    `json:"origin" xml:"origin"`
+	UserID    string    `json:"user_id" xml:"user_id"`
+	Amount    int64     `json:"amount" xml:"amount"`
+	Type      string    `json:"type" xml:"type"`
+	CreatedAt time.Time `json:"created_at" xml:"created_at"`
 }

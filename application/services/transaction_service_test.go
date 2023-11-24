@@ -63,9 +63,9 @@ func Test_TransactionService_CreateTransaction(t *testing.T) {
 	t.Run("create the new transaction", func(t *testing.T) {
 		mockRepo.EXPECT().Insert(gomock.Any(), gomock.Any()).Return(expected, nil)
 
-		res, err := service.CreateTransaction(ctx, req)
+		res, errs := service.CreateTransaction(ctx, req)
 
-		assert.NoError(t, err)
+		assert.Nil(t, errs)
 		assert.Equal(t, expected.Origin, res.Origin)
 		assert.Equal(t, expected.UserID, res.UserID)
 		assert.Equal(t, expected.Amount, res.Amount)
@@ -76,9 +76,9 @@ func Test_TransactionService_CreateTransaction(t *testing.T) {
 
 	t.Run("don't create with missing required fields", func(t *testing.T) {
 		req := &dto.CreateTransactionReq{}
-		res, err := service.CreateTransaction(ctx, req)
+		res, errs := service.CreateTransaction(ctx, req)
 
-		assert.Error(t, err)
+		assert.NotNil(t, errs)
 		assert.Nil(t, res)
 	})
 }
