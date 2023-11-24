@@ -39,6 +39,19 @@ If you are using VS Code, you can run the tests using the opening a terminal ins
 
 If you are using Docker Compose, you can run the tests using `docker-compose -f .devcontainer/docker-compose.yml exec transactions go test ./...`.
 
+#### How to run integration tests
+
+Some of the tests requires a database to be running. To run the integration tests, run `docker-compose -f .devcontainer/docker-compose.yml exec transactions go test -tags=integration ./...`.
+
+When creating an integration test, you should use the `integration` tag to make sure that the test will only run when the tag is provided.
+
+```go
+//go:build integration
+// +build integration
+
+package package_test
+```
+
 ### How to use mock
 
 The [gomock](https://github.com/uber-go/mock) library is used to generate mocks. To generate the mocks, run `mockgen -source=path/to/interface.go -destination=path/to/mock/interface_mock.go` inside the container.
