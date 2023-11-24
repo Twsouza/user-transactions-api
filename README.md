@@ -23,6 +23,12 @@ An API service to save, retrieve and list user transactions.
 
 1. Run `docker-compose -f .devcontainer/docker-compose.yml up -d`
 
+To enter inside of the container run:
+
+```bash
+docker-compose -f .devcontainer/docker-compose.yml exec transactions bash
+```
+
 #### How it works
 
 It creates and run the containers with all dependencies installed. You can develop in the IDE of your choice and the code will be synced with the container.
@@ -32,4 +38,8 @@ It creates and run the containers with all dependencies installed. You can devel
 If you are using VS Code, you can run the tests using the opening a terminal inside the container and running `go test ./...`.
 
 If you are using Docker Compose, you can run the tests using `docker-compose -f .devcontainer/docker-compose.yml exec transactions go test ./...`.
+
+### How to use mock
+
+The [gomock](https://github.com/uber-go/mock) library is used to generate mocks. To generate the mocks, run `mockgen -source=path/to/interface.go -destination=path/to/mock/interface_mock.go` inside the container.
 

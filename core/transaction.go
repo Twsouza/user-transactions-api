@@ -85,3 +85,7 @@ func (t *Transaction) validate() (errs []error) {
 
 	return
 }
+
+func (ot *OperationType) String() string {
+	return string(*ot)
+}

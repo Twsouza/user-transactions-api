@@ -116,3 +116,11 @@ func Test_NewTransaction(t *testing.T) {
 		assert.Equal(t, err[0].Error(), "Type must be one of [debit credit]")
 	})
 }
+
+func Test_OperationType_String(t *testing.T) {
+	debit := core.DEBIT
+	credit := core.CREDIT
+
+	assert.Equal(t, "debit", debit.String())
+	assert.Equal(t, "credit", credit.String())
+}
