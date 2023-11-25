@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "06b15133-7df2-44fe-84d0-ee67ee0f96a9",
+		"name": "User Transaction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2433332"
+	},
+	"item": [
+		{
+			"name": "List transaction",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"description": "also accepts `application/xml`"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/v1/transactions?origin=desktop-web&user_id=user123&type=credit&page=0&page_size=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "origin",
+							"value": "desktop-web"
+						},
+						{
+							"key": "user_id",
+							"value": "user123"
+						},
+						{
+							"key": "type",
+							"value": "credit"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "page_size",
+							"value": "1"
+						}
+					]
+				},
+				"description": "The query params are optional, default value for page is 0 and page_size is 10"
+			},
+			"response": []
+		},
+		{
+			"name": "Create a transaction",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"description": "also accepts `application/xml`"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"origin\": \"${string}\",\r\n    \"user_id\": \"user123\",\r\n    \"amount\": -200,\r\n    \"type\": \"debit\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/v1/transactions",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a transaction",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default",
+						"description": "also accepts `application/xml`"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/v1/transactions/{{id}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"transactions",
+						"{{id}}"
+					]
+				},
+				"description": "where 8d8c2e46-b8f9-413a-a3a1-bf6a657f30f5 is the id of the transaction"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "8d8c2e46-b8f9-413a-a3a1-bf6a657f30f5"
+		}
+	]
+}

@@ -61,3 +61,7 @@ The [gomock](https://github.com/uber-go/mock) library is used to generate mocks.
 To simulate the production environment, run `make run` and will spin up the containers (server application and database) and run the application.
 
 The `Dockerfile` is already configured to build the application for production environment and run it (it's 28MB).
+
+## Documentation
+
+To provide a better understanding of the API, the documentation was created using Postman and is live on https://documenter.getpostman.com/view/2433332/2s9YeD8YrB. Also the Postman collection is available on the root of the project.
