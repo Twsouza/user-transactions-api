@@ -42,7 +42,6 @@ func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset i
 	for key, value := range filter {
 		query = query.Where(fmt.Sprintf("%v = ?", key), value)
 	}
-	query.Order("created_at ASC")
 
 	var transactions []*core.Transaction
 	if err := query.Find(&transactions).Error; err != nil {

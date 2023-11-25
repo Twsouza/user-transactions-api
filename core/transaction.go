@@ -20,10 +20,10 @@ const (
 
 type Transaction struct {
 	ID        uuid.UUID
-	Origin    string        `validate:"required"`
-	UserID    string        `validate:"required"`
-	Amount    int64         `validate:"required,numeric"` // cents, 0 is not allowed
-	Type      OperationType `validate:"required,oneof=debit credit"`
+	Origin    string        `gorm:"index:idx_origin;index:idx_transaction" validate:"required"`
+	UserID    string        `gorm:"index:idx_user_iD;index:idx_transaction" validate:"required"`
+	Amount    int64         `gorm:"index:idx_amount;index:idx_transaction" validate:"required,numeric"` // cents, 0 is not allowed
+	Type      OperationType `gorm:"index:idx_type;index:idx_transaction" validate:"required,oneof=debit credit"`
 	CreatedAt time.Time
 }
 
