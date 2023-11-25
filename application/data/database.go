@@ -22,7 +22,9 @@ type Database struct {
 func (d *Database) Connect() (*gorm.DB, error) {
 	var err error
 
-	config := &gorm.Config{}
+	config := &gorm.Config{
+		PrepareStmt: true,
+	}
 	if d.Debug {
 		newLogger := logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),

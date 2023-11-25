@@ -50,6 +50,7 @@ func main() {
 	transactionRepo := repositories.NewTransactionRepository(dbConn)
 	transactionSvc, _ := services.NewTransactionService(transactionRepo)
 	handler := handler.NewTransactionHandler(transactionSvc)
+	go transactionRepo.WithBulkConfig(100, 1).RunGroupTransactions()
 
 	routes := router.SetupRouter(handler)
 	fmt.Printf("Server running on port %s\n", port)
