@@ -7,6 +7,7 @@ WORKDIR /src/user-transactions
 ADD go.mod go.sum ./
 
 RUN go install go.uber.org/mock/mockgen@latest && \
+  go install github.com/cosmtrek/air@latest && \
   go mod download
 
 ENV ADDR=0.0.0.0
