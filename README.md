@@ -56,3 +56,8 @@ package package_test
 
 The [gomock](https://github.com/uber-go/mock) library is used to generate mocks. To generate the mocks, run `mockgen -source=path/to/interface.go -destination=path/to/mock/interface_mock.go` inside the container.
 
+## Production
+
+To simulate the production environment, run `make run` and will spin up the containers (server application and database) and run the application.
+
+The `Dockerfile` is already configured to build the application for production environment and run it (it's 28MB).

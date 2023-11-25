@@ -20,10 +20,7 @@ var (
 )
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("error loading .env file")
-	}
+	godotenv.Load()
 
 	autoMigrateDb, err := strconv.ParseBool(os.Getenv("AUTO_MIGRATE_DB"))
 	if err != nil {

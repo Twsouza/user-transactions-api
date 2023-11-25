@@ -1,0 +1,25 @@
+
+version: '3'
+
+services:
+  transactions:
+    build: .
+    env_file:
+      - .env
+    environment:
+     - ENV=prod
+     - GIN_MODE=release
+     - DEBUG=false
+    ports:
+      - 3000:3000
+  database:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: transactions
+    volumes:
+      - root-db-data:/var/lib/postgresql/data
+
+volumes:
+  root-db-data:
