@@ -1,10 +1,11 @@
-# First test
+# Improvement tests
+## First test
 
 The tests were run on commit 52ca31ea68d44c33f469b81801d01ed94160d08a, serving as a baseline for the tests.
 
 ![test-1](test-1.png)
 
-# Second test
+## Second test
 
 Changed the Insert method to send to the bulk channel in a separate goroutine.
 
@@ -18,7 +19,7 @@ go func() {
 }()
 ```
 
-# Third test
+## Third test
 
 Change RunGroupTransactions to run the bulk create in a separate goroutine.
 
@@ -30,7 +31,7 @@ go func(transactions ...*core.Transaction) {
 }(bulk...)
 ```
 
-# Fourth test
+## Fourth test
 
 Use gorm pool connection
 
@@ -51,7 +52,7 @@ sqlDB.SetConnMaxLifetime(time.Hour)
 
 Improved the total request, request per second, average. The 90th percentile is better in List and Find, increase a bit in Create.
 
-# Fifth test
+## Fifth test
 
 Use pgBouncer to pool connections
 
@@ -80,7 +81,7 @@ Use pgBouncer to pool connections
 
 The results were worse than the previous test.
 
-# Sixth test
+## Sixth test
 
 All tests combined.
 
@@ -88,7 +89,7 @@ All tests combined.
 
 The results response time was better but the total request and request per second were worse.
 
-# Seventh test
+## Seventh test
 
 All tests combined and without pgBouncer.
 
@@ -96,6 +97,10 @@ All tests combined and without pgBouncer.
 
 The results were better than the previous test, specially 90th percentile. The total request were lower than just using gorm pool connection.
 
-# Conclusion
+## Conclusion
 
 Just using the gorm pool connection was the best result. The pgBouncer was the worst result. The other tests were similar to the gorm pool connection, but the gorm pool connection was better and add less complexity to the project.
+
+# Exponential backoff test
+
+![Exponential backoff test](test-exponential-backoff.png)

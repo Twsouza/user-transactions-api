@@ -6,6 +6,7 @@ import (
 	"time"
 	"user-transactions/core"
 
+	backoff "github.com/cenkalti/backoff/v4"
 	"gorm.io/gorm"
 )
 
@@ -75,13 +76,32 @@ func (r *TransactionRepositoryImpl) RunGroupTransactions() {
 			bulk = append(bulk, transaction)
 		default:
 			if len(bulk) > 0 && (len(bulk) >= r.BulkConfig.MaxSize || time.Since(timer).Seconds() >= r.BulkConfig.MaxTime) {
-				fmt.Printf("running bulk creation of %v transactions\n", len(bulk))
+				fmt.Printf("committing %d transactions with elapsed time of %v\n", len(bulk), time.Since(timer))
 
-				r.Db.Create(bulk)
+				go r.CommitBulk(bulk...)
 				bulk = nil
 				timer = time.Now()
 			}
 		}
+	}
+}
+
+func (r *TransactionRepositoryImpl) CommitBulk(transactions ...*core.Transaction) {
+	retryBo := backoff.NewExponentialBackOff()
+	retryBo.MaxElapsedTime = 60 * time.Minute
+
+	retryOp := func() error {
+		err := r.Db.Create(transactions).Error
+		if err != nil {
+			fmt.Printf("error when committing %v transactions: %v, retrying in %v\n", len(transactions), err, retryBo.NextBackOff())
+		}
+		return err
+	}
+
+	if err := backoff.Retry(retryOp, retryBo); err != nil {
+		fmt.Printf("error when committing %v transactions, aborting...", len(transactions))
+		// here we have some options, send to a dead letter queue, another table or database, file, or retry again
+		r.CommitBulk(transactions...)
 	}
 }
 
