@@ -3,6 +3,8 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"log"
+	"sync"
 	"time"
 	"user-transactions/core"
 
@@ -25,6 +27,7 @@ type TransactionRepositoryImpl struct {
 	Db         *gorm.DB
 	InsertChan chan *core.Transaction
 	BulkConfig *BulkConfig
+	CommitWg   sync.WaitGroup
 }
 
 func NewTransactionRepository(db *gorm.DB) *TransactionRepositoryImpl {
@@ -78,7 +81,9 @@ func (r *TransactionRepositoryImpl) RunGroupTransactions() {
 			if len(bulk) > 0 && (len(bulk) >= r.BulkConfig.MaxSize || time.Since(timer).Seconds() >= r.BulkConfig.MaxTime) {
 				fmt.Printf("committing %d transactions with elapsed time of %v\n", len(bulk), time.Since(timer))
 
+				r.CommitWg.Add(1)
 				go r.CommitBulk(bulk...)
+
 				bulk = nil
 				timer = time.Now()
 			}
@@ -87,6 +92,7 @@ func (r *TransactionRepositoryImpl) RunGroupTransactions() {
 }
 
 func (r *TransactionRepositoryImpl) CommitBulk(transactions ...*core.Transaction) {
+	defer r.CommitWg.Done()
 	retryBo := backoff.NewExponentialBackOff()
 	retryBo.MaxElapsedTime = 60 * time.Minute
 
@@ -112,4 +118,26 @@ func (bc *TransactionRepositoryImpl) WithBulkConfig(maxBulkItems int, maxWaiting
 	}
 
 	return bc
+}
+
+func (r *TransactionRepositoryImpl) Shutdown(ctx context.Context) error {
+	// since we close the HTTP server, InsertChan will not receive any more transactions
+	// so we can close it safely without any data loss
+	defer close(r.InsertChan)
+
+	// Waiting all CommitBulk operations finish.
+	done := make(chan struct{})
+	go func() {
+		r.CommitWg.Wait()
+		close(done)
+	}()
+
+	log.Println("Waiting for all transactions to be committed...")
+	select {
+	case <-done:
+		log.Println("All transactions committed, gracefully shutdown")
+		return nil
+	case <-ctx.Done():
+		return fmt.Errorf("timed out waiting for transactions to be committed: %s", ctx.Err())
+	}
 }
