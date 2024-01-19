@@ -10,17 +10,17 @@ import (
 	"strconv"
 	"syscall"
 	"time"
-	"user-transactions/application/data"
 	"user-transactions/application/handler"
-	"user-transactions/application/repositories"
 	"user-transactions/application/router"
 	"user-transactions/core/services"
+	"user-transactions/infrastructure/database"
+	"user-transactions/infrastructure/repositories"
 
 	"github.com/joho/godotenv"
 )
 
 var (
-	db   data.Database
+	db   database.PostgresDB
 	port string
 )
 
@@ -77,7 +77,7 @@ func main() {
 	log.Println("Server exited")
 }
 
-func gracefulShutdown(quit chan os.Signal, srv *http.Server, transactionRepo *repositories.TransactionRepositoryImpl) {
+func gracefulShutdown(quit chan os.Signal, srv *http.Server, transactionRepo *repositories.TransactionRepository) {
 	log.Println("Press Ctrl+C to shutdown server")
 	<-quit
 	log.Println("Server is shutting down...")

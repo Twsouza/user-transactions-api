@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"user-transactions/application/dto"
-	"user-transactions/application/repositories"
 	"user-transactions/core/entities"
+	"user-transactions/core/repositories"
 )
 
 type TransactionService struct {

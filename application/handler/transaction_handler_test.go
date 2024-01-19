@@ -15,9 +15,9 @@ import (
 	"user-transactions/application/dto"
 	"user-transactions/application/handler"
 	"user-transactions/application/presenters"
-	"user-transactions/application/repositories"
 	"user-transactions/core/entities"
 	"user-transactions/core/services"
+	"user-transactions/infrastructure/repositories"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

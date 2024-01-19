@@ -6,8 +6,8 @@ package repositories_test
 import (
 	"context"
 	"testing"
-	"user-transactions/application/repositories"
 	"user-transactions/core/entities"
+	"user-transactions/infrastructure/repositories"
 
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"

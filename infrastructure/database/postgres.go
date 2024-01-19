@@ -1,4 +1,4 @@
-package data
+package database
 
 import (
 	"log"
@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type Database struct {
+type PostgresDB struct {
 	Db            *gorm.DB
 	Logger        *log.Logger
 	Dsn           string
@@ -19,13 +19,13 @@ type Database struct {
 	AutoMigrateDb bool
 }
 
-func (d *Database) Connect() (*gorm.DB, error) {
+func (psql *PostgresDB) Connect() (*gorm.DB, error) {
 	var err error
 
 	config := &gorm.Config{
 		PrepareStmt: true,
 	}
-	if d.Debug {
+	if psql.Debug {
 		newLogger := logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
@@ -40,16 +40,16 @@ func (d *Database) Connect() (*gorm.DB, error) {
 		config.Logger = newLogger
 	}
 
-	d.Db, err = gorm.Open(postgres.Open(d.Dsn), config)
+	psql.Db, err = gorm.Open(postgres.Open(psql.Dsn), config)
 	if err != nil {
 		return nil, err
 	}
 
-	if d.AutoMigrateDb {
-		d.Db.AutoMigrate(entities.Transaction{})
+	if psql.AutoMigrateDb {
+		psql.Db.AutoMigrate(entities.Transaction{})
 	}
 
-	sqlDB, _ := d.Db.DB()
+	sqlDB, _ := psql.Db.DB()
 
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
 	sqlDB.SetMaxIdleConns(20)
@@ -60,5 +60,5 @@ func (d *Database) Connect() (*gorm.DB, error) {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	return d.Db, nil
+	return psql.Db, nil
 }

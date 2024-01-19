@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"user-transactions/application/dto"
-	mock_repositories "user-transactions/application/repositories/mock"
 	"user-transactions/core/entities"
+	mock_repositories "user-transactions/core/repositories/mock"
 	"user-transactions/core/services"
 
 	"github.com/google/uuid"

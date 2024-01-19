@@ -12,32 +12,26 @@ import (
 	"gorm.io/gorm"
 )
 
-type TransactionRepository interface {
-	Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error)
-	Find(ctx context.Context, id string) (*entities.Transaction, error)
-	List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error)
-}
-
 type BulkConfig struct {
 	MaxSize int
 	MaxTime float64
 }
 
-type TransactionRepositoryImpl struct {
+type TransactionRepository struct {
 	Db         *gorm.DB
 	InsertChan chan *entities.Transaction
 	BulkConfig *BulkConfig
 	CommitWg   sync.WaitGroup
 }
 
-func NewTransactionRepository(db *gorm.DB) *TransactionRepositoryImpl {
-	return &TransactionRepositoryImpl{
+func NewTransactionRepository(db *gorm.DB) *TransactionRepository {
+	return &TransactionRepository{
 		Db:         db,
 		InsertChan: make(chan *entities.Transaction),
 	}
 }
 
-func (r *TransactionRepositoryImpl) Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
+func (r *TransactionRepository) Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
 	if r.BulkConfig != nil {
 		r.InsertChan <- transaction
 	} else {
@@ -49,7 +43,7 @@ func (r *TransactionRepositoryImpl) Insert(ctx context.Context, transaction *ent
 	return transaction, nil
 }
 
-func (r *TransactionRepositoryImpl) Find(ctx context.Context, id string) (*entities.Transaction, error) {
+func (r *TransactionRepository) Find(ctx context.Context, id string) (*entities.Transaction, error) {
 	var transaction entities.Transaction
 	if err := r.Db.Where("id = ?", id).First(&transaction).Error; err != nil {
 		return nil, err
@@ -57,7 +51,7 @@ func (r *TransactionRepositoryImpl) Find(ctx context.Context, id string) (*entit
 	return &transaction, nil
 }
 
-func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error) {
+func (r *TransactionRepository) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error) {
 	query := r.Db.Limit(pageSize).Offset(offset)
 	for key, value := range filter {
 		query = query.Where(fmt.Sprintf("%v = ?", key), value)
@@ -70,7 +64,7 @@ func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset i
 	return transactions, nil
 }
 
-func (r *TransactionRepositoryImpl) RunGroupTransactions() {
+func (r *TransactionRepository) RunGroupTransactions() {
 	var bulk []*entities.Transaction
 	timer := time.Now()
 	for {
@@ -91,7 +85,7 @@ func (r *TransactionRepositoryImpl) RunGroupTransactions() {
 	}
 }
 
-func (r *TransactionRepositoryImpl) CommitBulk(transactions ...*core.Transaction) {
+func (r *TransactionRepository) CommitBulk(transactions ...*entities.Transaction) {
 	defer r.CommitWg.Done()
 	retryBo := backoff.NewExponentialBackOff()
 	retryBo.MaxElapsedTime = 60 * time.Minute
@@ -111,16 +105,16 @@ func (r *TransactionRepositoryImpl) CommitBulk(transactions ...*core.Transaction
 	}
 }
 
-func (bc *TransactionRepositoryImpl) WithBulkConfig(maxBulkItems int, maxWaitingSeconds float64) *TransactionRepositoryImpl {
-	bc.BulkConfig = &BulkConfig{
+func (r *TransactionRepository) WithBulkConfig(maxBulkItems int, maxWaitingSeconds float64) *TransactionRepository {
+	r.BulkConfig = &BulkConfig{
 		MaxSize: maxBulkItems,
 		MaxTime: maxWaitingSeconds,
 	}
 
-	return bc
+	return r
 }
 
-func (r *TransactionRepositoryImpl) Shutdown(ctx context.Context) error {
+func (r *TransactionRepository) Shutdown(ctx context.Context) error {
 	// since we close the HTTP server, InsertChan will not receive any more transactions
 	// so we can close it safely without any data loss
 	defer close(r.InsertChan)
