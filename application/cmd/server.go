@@ -14,7 +14,7 @@ import (
 	"user-transactions/application/handler"
 	"user-transactions/application/repositories"
 	"user-transactions/application/router"
-	"user-transactions/application/services"
+	"user-transactions/core/services"
 
 	"github.com/joho/godotenv"
 )

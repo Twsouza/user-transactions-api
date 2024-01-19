@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"user-transactions/application/dto"
 	"user-transactions/application/presenters"
-	"user-transactions/application/services"
+	"user-transactions/core/services"
 
 	"github.com/gin-gonic/gin"
 )

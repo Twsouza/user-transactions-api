@@ -9,8 +9,8 @@ import (
 
 	"user-transactions/application/dto"
 	mock_repositories "user-transactions/application/repositories/mock"
-	"user-transactions/application/services"
 	"user-transactions/core/entities"
+	"user-transactions/core/services"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
