@@ -7,7 +7,7 @@ import (
 	"context"
 	"testing"
 	"user-transactions/application/repositories"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
@@ -18,7 +18,7 @@ import (
 func setupDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	assert.NoError(t, err)
-	assert.NoError(t, db.AutoMigrate(&core.Transaction{}))
+	assert.NoError(t, db.AutoMigrate(&entities.Transaction{}))
 
 	t.Cleanup(func() {
 		sqlDB, _ := db.DB()
@@ -33,7 +33,7 @@ func Test_TransactionRepositoryImpl_Insert(t *testing.T) {
 
 	repo := repositories.NewTransactionRepository(db)
 
-	transaction, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+	transaction, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 	assert.Empty(t, errs)
 	ctx, cancel := context.WithTimeout(context.Background(), 5)
 	defer cancel()
@@ -49,7 +49,7 @@ func Test_TransactionRepositoryImpl_Find(t *testing.T) {
 	repo := repositories.NewTransactionRepository(db)
 
 	t.Run("finding a transaction that exists", func(t *testing.T) {
-		transaction, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 
 		err := db.Create(transaction).Error
@@ -85,12 +85,12 @@ func Test_TransactionRepositoryImpl_List(t *testing.T) {
 
 		repo := repositories.NewTransactionRepository(db)
 
-		transaction1, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction1, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		err := db.Create(transaction1).Error
 		assert.NoError(t, err)
 
-		transaction2, errs := core.NewTransaction("desktop-web", "user123", -200, core.DEBIT)
+		transaction2, errs := entities.NewTransaction("desktop-web", "user123", -200, entities.DEBIT)
 		assert.Empty(t, errs)
 		err = db.Create(transaction2).Error
 		assert.NoError(t, err)
@@ -110,17 +110,17 @@ func Test_TransactionRepositoryImpl_List(t *testing.T) {
 
 		repo := repositories.NewTransactionRepository(db)
 
-		transaction1, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction1, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		err := db.Create(transaction1).Error
 		assert.NoError(t, err)
 
-		transaction2, errs := core.NewTransaction("desktop-web", "user456", -200, core.DEBIT)
+		transaction2, errs := entities.NewTransaction("desktop-web", "user456", -200, entities.DEBIT)
 		assert.Empty(t, errs)
 		err = db.Create(transaction2).Error
 		assert.NoError(t, err)
 
-		transaction3, errs := core.NewTransaction("mobile-android", "user456", -200, core.DEBIT)
+		transaction3, errs := entities.NewTransaction("mobile-android", "user456", -200, entities.DEBIT)
 		assert.Empty(t, errs)
 		err = db.Create(transaction3).Error
 		assert.NoError(t, err)
@@ -140,12 +140,12 @@ func Test_TransactionRepositoryImpl_List(t *testing.T) {
 
 		repo := repositories.NewTransactionRepository(db)
 
-		transaction1, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction1, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		err := db.Create(transaction1).Error
 		assert.NoError(t, err)
 
-		transaction2, errs := core.NewTransaction("desktop-web", "user456", -200, core.DEBIT)
+		transaction2, errs := entities.NewTransaction("desktop-web", "user456", -200, entities.DEBIT)
 		assert.Empty(t, errs)
 		err = db.Create(transaction2).Error
 		assert.NoError(t, err)
@@ -163,12 +163,12 @@ func Test_TransactionRepositoryImpl_List(t *testing.T) {
 
 		repo := repositories.NewTransactionRepository(db)
 
-		transaction1, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction1, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		err := db.Create(transaction1).Error
 		assert.NoError(t, err)
 
-		transaction2, errs := core.NewTransaction("desktop-web", "user456", -200, core.DEBIT)
+		transaction2, errs := entities.NewTransaction("desktop-web", "user456", -200, entities.DEBIT)
 		assert.Empty(t, errs)
 		err = db.Create(transaction2).Error
 		assert.NoError(t, err)

@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"time"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -46,7 +46,7 @@ func (d *Database) Connect() (*gorm.DB, error) {
 	}
 
 	if d.AutoMigrateDb {
-		d.Db.AutoMigrate(core.Transaction{})
+		d.Db.AutoMigrate(entities.Transaction{})
 	}
 
 	sqlDB, _ := d.Db.DB()

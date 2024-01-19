@@ -6,16 +6,16 @@ import (
 	"log"
 	"sync"
 	"time"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 
 	backoff "github.com/cenkalti/backoff/v4"
 	"gorm.io/gorm"
 )
 
 type TransactionRepository interface {
-	Insert(ctx context.Context, transaction *core.Transaction) (*core.Transaction, error)
-	Find(ctx context.Context, id string) (*core.Transaction, error)
-	List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*core.Transaction, error)
+	Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error)
+	Find(ctx context.Context, id string) (*entities.Transaction, error)
+	List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error)
 }
 
 type BulkConfig struct {
@@ -25,7 +25,7 @@ type BulkConfig struct {
 
 type TransactionRepositoryImpl struct {
 	Db         *gorm.DB
-	InsertChan chan *core.Transaction
+	InsertChan chan *entities.Transaction
 	BulkConfig *BulkConfig
 	CommitWg   sync.WaitGroup
 }
@@ -33,11 +33,11 @@ type TransactionRepositoryImpl struct {
 func NewTransactionRepository(db *gorm.DB) *TransactionRepositoryImpl {
 	return &TransactionRepositoryImpl{
 		Db:         db,
-		InsertChan: make(chan *core.Transaction),
+		InsertChan: make(chan *entities.Transaction),
 	}
 }
 
-func (r *TransactionRepositoryImpl) Insert(ctx context.Context, transaction *core.Transaction) (*core.Transaction, error) {
+func (r *TransactionRepositoryImpl) Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
 	if r.BulkConfig != nil {
 		r.InsertChan <- transaction
 	} else {
@@ -49,21 +49,21 @@ func (r *TransactionRepositoryImpl) Insert(ctx context.Context, transaction *cor
 	return transaction, nil
 }
 
-func (r *TransactionRepositoryImpl) Find(ctx context.Context, id string) (*core.Transaction, error) {
-	var transaction core.Transaction
+func (r *TransactionRepositoryImpl) Find(ctx context.Context, id string) (*entities.Transaction, error) {
+	var transaction entities.Transaction
 	if err := r.Db.Where("id = ?", id).First(&transaction).Error; err != nil {
 		return nil, err
 	}
 	return &transaction, nil
 }
 
-func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*core.Transaction, error) {
+func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error) {
 	query := r.Db.Limit(pageSize).Offset(offset)
 	for key, value := range filter {
 		query = query.Where(fmt.Sprintf("%v = ?", key), value)
 	}
 
-	var transactions []*core.Transaction
+	var transactions []*entities.Transaction
 	if err := query.Find(&transactions).Error; err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (r *TransactionRepositoryImpl) List(ctx context.Context, pageSize, offset i
 }
 
 func (r *TransactionRepositoryImpl) RunGroupTransactions() {
-	var bulk []*core.Transaction
+	var bulk []*entities.Transaction
 	timer := time.Now()
 	for {
 		select {

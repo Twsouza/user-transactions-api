@@ -11,7 +11,7 @@ package mock_repositories
 import (
 	context "context"
 	reflect "reflect"
-	core "user-transactions/core"
+	"user-transactions/core/entities"
 
 	gomock "go.uber.org/mock/gomock"
 )
@@ -40,10 +40,10 @@ func (m *MockTransactionRepository) EXPECT() *MockTransactionRepositoryMockRecor
 }
 
 // Find mocks base method.
-func (m *MockTransactionRepository) Find(ctx context.Context, id string) (*core.Transaction, error) {
+func (m *MockTransactionRepository) Find(ctx context.Context, id string) (*entities.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", ctx, id)
-	ret0, _ := ret[0].(*core.Transaction)
+	ret0, _ := ret[0].(*entities.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -55,10 +55,10 @@ func (mr *MockTransactionRepositoryMockRecorder) Find(ctx, id any) *gomock.Call 
 }
 
 // Insert mocks base method.
-func (m *MockTransactionRepository) Insert(ctx context.Context, transaction *core.Transaction) (*core.Transaction, error) {
+func (m *MockTransactionRepository) Insert(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Insert", ctx, transaction)
-	ret0, _ := ret[0].(*core.Transaction)
+	ret0, _ := ret[0].(*entities.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -70,10 +70,10 @@ func (mr *MockTransactionRepositoryMockRecorder) Insert(ctx, transaction any) *g
 }
 
 // List mocks base method.
-func (m *MockTransactionRepository) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*core.Transaction, error) {
+func (m *MockTransactionRepository) List(ctx context.Context, pageSize, offset int, filter map[string]string) ([]*entities.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", ctx, pageSize, offset, filter)
-	ret0, _ := ret[0].([]*core.Transaction)
+	ret0, _ := ret[0].([]*entities.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

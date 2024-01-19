@@ -17,7 +17,7 @@ import (
 	"user-transactions/application/presenters"
 	"user-transactions/application/repositories"
 	"user-transactions/application/services"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +29,7 @@ import (
 func setupService(t *testing.T) *services.TransactionService {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	assert.NoError(t, err)
-	assert.NoError(t, db.AutoMigrate(&core.Transaction{}))
+	assert.NoError(t, db.AutoMigrate(&entities.Transaction{}))
 
 	t.Cleanup(func() {
 		sqlDB, _ := db.DB()
@@ -192,7 +192,7 @@ func Test_TransactionHandler_Get(t *testing.T) {
 	t.Run("getting a transaction by ID", func(t *testing.T) {
 
 		// Create a new transaction
-		transaction, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		_, err := s.TransactionRepository.Insert(context.Background(), transaction)
 		assert.NoError(t, err)
@@ -231,7 +231,7 @@ func Test_TransactionHandler_Get(t *testing.T) {
 	t.Run("getting a transaction by ID accepting XML", func(t *testing.T) {
 
 		// Create a new transaction
-		transaction, errs := core.NewTransaction("desktop-web", "user123", 200, core.CREDIT)
+		transaction, errs := entities.NewTransaction("desktop-web", "user123", 200, entities.CREDIT)
 		assert.Empty(t, errs)
 		_, err := s.TransactionRepository.Insert(context.Background(), transaction)
 		assert.NoError(t, err)
@@ -301,13 +301,13 @@ func Test_TransactionHandler_List(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		// Create a new transaction with desktop-web origin
-		transaction, errs := core.NewTransaction("desktop-web", "user123", 100, core.CREDIT)
+		transaction, errs := entities.NewTransaction("desktop-web", "user123", 100, entities.CREDIT)
 		assert.Empty(t, errs)
 		_, err := s.TransactionRepository.Insert(context.Background(), transaction)
 		assert.NoError(t, err)
 	}
 	// Create a new transaction with mobile-android origin
-	transaction, errs := core.NewTransaction("mobile-android", "user123", 100, core.CREDIT)
+	transaction, errs := entities.NewTransaction("mobile-android", "user123", 100, entities.CREDIT)
 	assert.Empty(t, errs)
 	_, err := s.TransactionRepository.Insert(context.Background(), transaction)
 	assert.NoError(t, err)

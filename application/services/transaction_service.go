@@ -8,7 +8,7 @@ import (
 
 	"user-transactions/application/dto"
 	"user-transactions/application/repositories"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 )
 
 type TransactionService struct {
@@ -32,7 +32,7 @@ func (ts *TransactionService) CreateTransaction(c context.Context, req *dto.Crea
 	ctx, cancel := context.WithTimeout(c, time.Duration(ts.Timeout)*time.Second)
 	defer cancel()
 
-	transaction, errs := core.NewTransaction(req.Origin, req.UserID, req.Amount, core.OperationType(req.Type))
+	transaction, errs := entities.NewTransaction(req.Origin, req.UserID, req.Amount, entities.OperationType(req.Type))
 	if errs != nil {
 		return nil, errs
 	}

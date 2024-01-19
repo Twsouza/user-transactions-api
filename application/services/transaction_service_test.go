@@ -10,7 +10,7 @@ import (
 	"user-transactions/application/dto"
 	mock_repositories "user-transactions/application/repositories/mock"
 	"user-transactions/application/services"
-	"user-transactions/core"
+	"user-transactions/core/entities"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -46,11 +46,11 @@ func Test_TransactionService_CreateTransaction(t *testing.T) {
 		Type:   "debit",
 		UserID: "user123",
 	}
-	expected := &core.Transaction{
+	expected := &entities.Transaction{
 		Origin: "desktop-web",
 		UserID: "user123",
 		Amount: -150,
-		Type:   core.DEBIT,
+		Type:   entities.DEBIT,
 	}
 
 	ctrl := gomock.NewController(t)
@@ -88,7 +88,7 @@ func Test_TransactionService_GetTransaction(t *testing.T) {
 	id, err := uuid.NewRandom()
 	assert.Nil(t, err)
 	idStr := id.String()
-	expected := &core.Transaction{
+	expected := &entities.Transaction{
 		ID:        id,
 		Origin:    "desktop-web",
 		UserID:    "user123",
@@ -142,7 +142,7 @@ func Test_TransactionService_ListTransactions(t *testing.T) {
 		filter := map[string]string{
 			"origin": "desktop-web",
 		}
-		expected := []*core.Transaction{
+		expected := []*entities.Transaction{
 			{
 				ID:        uuid.New(),
 				Origin:    "desktop-web",
@@ -168,7 +168,7 @@ func Test_TransactionService_ListTransactions(t *testing.T) {
 	})
 
 	t.Run("list transactions", func(t *testing.T) {
-		expected := []*core.Transaction{
+		expected := []*entities.Transaction{
 			{
 				ID:        uuid.New(),
 				Origin:    "desktop-web",
